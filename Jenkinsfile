@@ -12,6 +12,7 @@ pipeline {
         MONGO_DB_CREDS = credentials('mongo-db-credentials')
         MONGO_USER = credentials('mongo-db-username')
         MONGO_PASS = credentials('mongo-db-password')
+        SONAR_SCANNER_HOME = tool 'sonarqube-scanner-801';
     }
 
 
@@ -114,6 +115,20 @@ pipeline {
                         reportName: 'Code Coverage HTML Report'
                     ])
                 }
+            }
+        }
+
+
+        stage('SAST - SonarQube') {
+            steps {
+                sh 'echo $SONAR_SCANNER_HOME'
+                sh '''
+                    $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=Jenkins-Application-Project \
+                        -Dsonar.sources=app.js \
+                        -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.token=sqp_da195eae3aafa6e850e347ed90f21a9743e1923e
+                '''
             }
         }
     }
