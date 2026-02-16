@@ -18,5 +18,40 @@ pipeline {
                 sh 'npm install --no-audit'
             }
         }
+
+        stage('Dependency Scanning') {
+            parallel {
+
+                stage('NPM Dependency Audit') {
+                    steps {
+                        sh 'npm audit --audit-level=high'
+                    }
+                }
+
+                stage('OWASP Dependency Check') {
+                    steps {
+                        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+                            sh """
+                                ${tool 'OWASP-DepCheck-12'}/bin/dependency-check.sh \
+                                    --scan . \
+                                    --format ALL \
+                                    --project "Jenkins-Application" \
+                                    --nvdApiKey \$NVD_KEY \
+                                    --out ./dependency-check-report
+                            """
+                        }
+                    }
+
+                    post {
+                        always {
+                            dependencyCheckPublisher(
+                                pattern: 'dependency-check-report/*.xml',
+                                
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
