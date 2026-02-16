@@ -214,5 +214,32 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy - AWS EC2') {
+            when {
+                branch 'feature/*'
+            }
+            steps {
+                script {
+                    sshagent(['aws-dev-deploy-ec2-instance']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ubuntu@52.66.203.24 "
+                                if sudo docker ps -a | grep -q "jenkins-application"; then
+                                    echo "Container found. Stopping..."
+                                        sudo docker stop "jenkins-application" && sudo docker rm "jenkins-application"
+                                    echo "Container stopped and removed."
+                                fi
+                                    sudo docker run --name jenkins-application \
+                                        -e MONGO_HOST=$MONGO_HOST \
+                                        -e MONGO_USER=$MONGO_USER \
+                                        -e MONGO_PASS=$MONGO_PASS \
+                                        -p 3000:3000 -d saikiran8050/jenkins-application:$GIT_COMMIT
+                            "
+                        '''
+                    }
+                }
+                
+            }
+        }
     }
 }
