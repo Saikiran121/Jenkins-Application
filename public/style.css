@@ -1,0 +1,120 @@
+:root {
+    --bg-color: #020c1b;
+    --card-bg: rgba(10, 25, 47, 0.7);
+    --primary: #64ffda;
+    --text-main: #ccd6f6;
+    --text-dim: #8892b0;
+    --glass-border: rgba(100, 255, 218, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Hero Section */
+header {
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #020c1b 0%, #0a192f 100%);
+    text-align: center;
+    padding: 20px;
+}
+
+header h1 {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+header p {
+    color: var(--text-dim);
+    font-size: 1.2rem;
+}
+
+/* Main Content */
+main {
+    max-width: 1200px;
+    margin: -50px auto 50px auto;
+    padding: 20px;
+}
+
+#species-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* Glassmorphism Card */
+.specie-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: float 6s ease-in-out infinite;
+}
+
+.specie-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px -10px rgba(100, 255, 218, 0.3);
+}
+
+.specie-card h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.specie-card p {
+    margin-bottom: 10px;
+    color: var(--text-dim);
+}
+
+.specie-card .stat-label {
+    color: var(--text-main);
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+/* Animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--glass-border);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+}
