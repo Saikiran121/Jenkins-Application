@@ -1,5 +1,7 @@
 pipeline {
-    agent any 
+    agent {
+        label 'ubuntu-jenkins-ec2-node'
+    }
 
     tools {
         nodejs 'nodejs-24-13-0'
@@ -7,11 +9,12 @@ pipeline {
 
     environment {
         // IDs must match what you create in Jenkins -> Credentials
-        MONGO_HOST = 'localhost:27017' 
+        //MONGO_HOST = 'localhost:27017' 
         //MONGO_DB   = 'deepsea'
-        MONGO_DB_CREDS = credentials('mongo-db-credentials')
-        MONGO_USER = credentials('mongo-db-username')
-        MONGO_PASS = credentials('mongo-db-password')
+        MONGO_URI = credentials('mongo-atlas-uri')
+        //MONGO_DB_CREDS = credentials('mongo-db-credentials')
+        //MONGO_USER = credentials('mongo-db-username')
+        //MONGO_PASS = credentials('mongo-db-password')
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-801';
     }
 
@@ -211,6 +214,90 @@ pipeline {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
                     sh 'docker push saikiran8050/jenkins-application:$GIT_COMMIT'
+                }
+            }
+        }
+
+        stage('Deploy - AWS EC2') {
+            when {
+                branch 'feature/*'
+            }
+            steps {
+                script {
+                    sshagent(['aws-dev-deploy-ec2-instance']) {
+                        sh '''
+                            ssh -o StrictHostKeyChecking=no ubuntu@52.66.203.24 "
+                                if sudo docker ps -a | grep -q "jenkins-application"; then
+                                    echo "Container found. Stopping..."
+                                        sudo docker stop "jenkins-application" && sudo docker rm "jenkins-application"
+                                    echo "Container stopped and removed."
+                                fi
+                                    sudo docker run --name jenkins-application \
+                                        -e MONGO_URI=$MONGO_URI \
+                                        -p 3000:3000 -d saikiran8050/jenkins-application:$GIT_COMMIT
+                            "
+                        '''
+                    }
+                }
+                
+            }
+        }
+
+        stage('Integration Testing - AWS EC2') {
+            when {
+                branch 'feature/*'
+            }
+            steps {
+                sh 'printenv | grep -i branch'
+                withAWS(credentials: 'aws-s3-ec2-lambda-creds', region: 'ap-south-1') {
+                    sh '''
+                        bash integration-testing-ec2.sh
+                    '''
+                }
+            }
+        }
+
+        stage('K8S Update Image Tag') {
+            when{
+                branch 'PR*'
+            }
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'GitHub',
+                    usernameVariable: 'GIT_USERNAME',
+                    passwordVariable: 'GIT_TOKEN'
+                )])
+
+                sh '''
+                    ### Remove existing repo if present ###
+                    if [ -d "Jenkins-Application-K8S" ]; then
+                        echo "Existing Jenkins-Application-K8S directory found. Deleting..."
+                        rm -rf Jenkins-Application-K8S
+                    fi
+
+                    ### Clone the repo using credentials ###
+                    git clone https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/Saikiran121/Jenkins-Application-K8S.git
+                '''
+
+                
+
+                dir('Jenkins-Application-K8S') {
+                    sh '''
+                        ### Replace Docker Image Tag ###
+                        git checkout main 
+                        git checkout -b feature-$BUILD_ID
+                        sed -i "s#saikiran8050/jenkins-application:.*#saikiran8050/jenkins-application:${GIT_COMMIT}#g" deployment.yml
+                        cat deployment.yml
+
+                        ####  Commit and push to Feature branch ####
+                        git config user.email "saikiranbiradar76642@gmail.com"
+                        git config user.name "Saikiran Biradar"
+                        git add deployment.yml
+                        git commit -m "Updated docker image to ${GIT_COMMIT}"
+
+                        #### Push Branch ####
+                        git push -u origin feature-${BUILD_ID}
+                    '''
                 }
             }
         }
