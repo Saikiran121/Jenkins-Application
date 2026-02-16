@@ -140,7 +140,7 @@ pipeline {
         stage('Docker Build Image') {
             steps {
                 sh 'printenv'
-                sh 'docker build -t saikiran8050/Jenkins-Application:$GIT_COMMIT .'
+                sh 'docker build -t saikiran8050/jenkins-application:$GIT_COMMIT .'
             }
         }
     }
