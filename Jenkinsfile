@@ -89,5 +89,13 @@ pipeline {
                 junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-report/test-results.xml'
             }
         }
+
+        stage('Code Coverage') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASS', usernameVariable: 'MONGO_USER')]) {
+                    sh 'npm run coverage'
+                }
+            }
+        }
     }
 }
