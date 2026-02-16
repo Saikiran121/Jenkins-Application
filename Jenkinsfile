@@ -38,6 +38,7 @@ pipeline {
                                     --project "Jenkins-Application" \
                                     --nvdApiKey \$NVD_KEY \\
                                     --disableYarnAudit \
+                                    --failOnCVSS 7 \
                                     --out ./dependency-check-report
                             """
                         }
