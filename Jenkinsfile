@@ -254,5 +254,50 @@ pipeline {
                 }
             }
         }
+
+        stage('K8S Update Image Tag') {
+            when{
+                branch 'PR*'
+            }
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'GitHub',
+                    usernameVariable: 'GIT_USERNAME',
+                    passwordVariable: 'GIT_TOKEN'
+                )])
+
+                sh '''
+                    ### Remove existing repo if present ###
+                    if [ -d "Jenkins-Application-K8S" ]; then
+                        echo "Existing Jenkins-Application-K8S directory found. Deleting..."
+                        rm -rf Jenkins-Application-K8S
+                    fi
+
+                    ### Clone the repo using credentials ###
+                    git clone https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/Saikiran121/Jenkins-Application-K8S.git
+                '''
+
+                
+
+                dir('Jenkins-Application-K8S') {
+                    sh '''
+                        ### Replace Docker Image Tag ###
+                        git checkout main 
+                        git checkout -b feature-$BUILD_ID
+                        sed -i "s#saikiran8050/jenkins-application:.*#saikiran8050/jenkins-application:${GIT_COMMIT}#g" deployment.yml
+                        cat deployment.yml
+
+                        ####  Commit and push to Feature branch ####
+                        git config user.email "saikiranbiradar76642@gmail.com"
+                        git config user.name "Saikiran Biradar"
+                        git add deployment.yml
+                        git commit -m "Updated docker image to ${GIT_COMMIT}"
+
+                        #### Push Branch ####
+                        git push -u origin feature-${BUILD_ID}
+                    '''
+                }
+            }
+        }
     }
 }
