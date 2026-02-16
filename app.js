@@ -21,9 +21,17 @@ const mongoURI = MONGO_USER && MONGO_PASS
     ? `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/${MONGO_DB}?authSource=admin`
     : `mongodb://${MONGO_HOST}/${MONGO_DB}`;
 
-mongoose.connect(mongoURI)
+// Strict connection: the app should wait for connection or fail
+mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 5000 })
     .then(() => console.log('Connected to Deep Sea Database'))
-    .catch(err => console.error('Abyssal Connection Error:', err));
+    .catch(err => {
+        console.error('CRITICAL: Abyssal Connection Error:', err.message);
+        // Important: In a CI environment, we want to fail fast if the DB is missing
+        if (process.env.NODE_ENV === 'test' || require.main === module) {
+            console.error('Exiting due to failed database connection.');
+            process.exit(1);
+        }
+    });
 
 // Mongoose Schema & Model
 const speciesSchema = new mongoose.Schema({
