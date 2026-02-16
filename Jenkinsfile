@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent Jenkins-EC2-Node
 
     tools {
         nodejs 'nodejs-24-13-0'
