@@ -17,9 +17,14 @@ const MONGO_PASS = process.env.MONGO_PASS;
 const MONGO_HOST = process.env.MONGO_HOST || 'localhost:27017';
 const MONGO_DB = process.env.MONGO_DB || 'deepsea';
 
-const mongoURI = MONGO_USER && MONGO_PASS
-    ? `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/${MONGO_DB}?authSource=admin`
-    : `mongodb://${MONGO_HOST}/${MONGO_DB}`;
+// Explicitly fail if credentials are missing (as requested for security/CI)
+if (!MONGO_USER || !MONGO_PASS) {
+    console.error('❌ CRITICAL ERROR: MONGO_USER or MONGO_PASS environment variables are missing!');
+    console.error('Please configure your credentials in the environment or .env file.');
+    process.exit(1);
+}
+
+const mongoURI = `mongodb://${MONGO_USER}:${MONGO_PASS}@${MONGO_HOST}/${MONGO_DB}?authSource=admin`;
 
 // Strict connection: the app should wait for connection or fail
 mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 5000 })
