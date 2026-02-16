@@ -7,11 +7,12 @@ pipeline {
 
     environment {
         // IDs must match what you create in Jenkins -> Credentials
-        MONGO_HOST = 'localhost:27017' 
+        //MONGO_HOST = 'localhost:27017' 
         //MONGO_DB   = 'deepsea'
-        MONGO_DB_CREDS = credentials('mongo-db-credentials')
-        MONGO_USER = credentials('mongo-db-username')
-        MONGO_PASS = credentials('mongo-db-password')
+        MONGO_URI = credentials('mongo-atlas-uri')
+        //MONGO_DB_CREDS = credentials('mongo-db-credentials')
+        //MONGO_USER = credentials('mongo-db-username')
+        //MONGO_PASS = credentials('mongo-db-password')
         SONAR_SCANNER_HOME = tool 'sonarqube-scanner-801';
     }
 
@@ -230,9 +231,7 @@ pipeline {
                                     echo "Container stopped and removed."
                                 fi
                                     sudo docker run --name jenkins-application \
-                                        -e MONGO_HOST=$MONGO_HOST \
-                                        -e MONGO_USER=$MONGO_USER \
-                                        -e MONGO_PASS=$MONGO_PASS \
+                                        -e MONGO_URI=$MONGO_URI \
                                         -p 3000:3000 -d saikiran8050/jenkins-application:$GIT_COMMIT
                             "
                         '''
