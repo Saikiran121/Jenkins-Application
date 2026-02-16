@@ -5,6 +5,12 @@ pipeline {
         nodejs 'nodejs-24-13-0'
     }
 
+    environment {
+        // IDs must match what you create in Jenkins -> Credentials
+        MONGO_HOST = 'localhost:27017' 
+        //MONGO_DB   = 'deepsea'
+    }
+
     stages {
         stage('Check Node version') {
             steps {
@@ -70,7 +76,9 @@ pipeline {
 
         stage('Unit Testing') {
             steps {
-                sh 'npm test'
+                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASS', usernameVariable: 'MONGO_USER')]) {
+                    sh 'npm test'
+                }
             }
         }
     }
