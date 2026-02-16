@@ -9,6 +9,9 @@ pipeline {
         // IDs must match what you create in Jenkins -> Credentials
         MONGO_HOST = 'localhost:27017' 
         //MONGO_DB   = 'deepsea'
+        MONGO_DB_CREDS = credentials('mongo-db-credentials')
+        MONGO_USERNAME = credentials('mongo-db-username')
+        MONGO_PASSWORD = credentials('mongo-db-password')
     }
 
 
@@ -82,31 +85,35 @@ pipeline {
 
         stage('Unit Testing') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASS', usernameVariable: 'MONGO_USER')]) {
-                    sh 'npm test'
-                }
+                sh 'npm test'
+            }
 
-                junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-report/test-results.xml'
+            post {
+                always {
+                    junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-report/test-results.xml'
+                }
             }
         }
 
         stage('Code Coverage') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'mongo-db-credentials', passwordVariable: 'MONGO_PASS', usernameVariable: 'MONGO_USER')]) {
-                    catchError(buildResult: 'SUCCESS', message: 'It will be fixed in future releases', stageResult: 'UNSTABLE') {
-                        sh 'npm run coverage'
-                    }
+                catchError(buildResult: 'SUCCESS', message: 'It will be fixed in future releases', stageResult: 'UNSTABLE') {
+                    sh 'npm run coverage'
                 }
+            }
 
-                publishHTML([
-                                allowMissing: true, 
-                                alwaysLinkToLastBuild: true, 
-                                icon: '', 
-                                keepAll: true, 
-                                reportDir: 'coverage/lcov-report', 
-                                reportFiles: 'index.html', 
-                                reportName: 'Code Coverage HTML Report'
-                            ])
+            post {
+                always {
+                    publishHTML([
+                        allowMissing: true, 
+                        alwaysLinkToLastBuild: true, 
+                        icon: '', 
+                        keepAll: true, 
+                        reportDir: 'coverage/lcov-report', 
+                        reportFiles: 'index.html', 
+                        reportName: 'Code Coverage HTML Report'
+                    ])
+                }
             }
         }
     }
