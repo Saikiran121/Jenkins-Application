@@ -154,7 +154,7 @@ pipeline {
                         --format json -o trivy-image-MEDIUM-results.json
                     
                     trivy image saikiran8050/jenkins-application:$GIT_COMMIT \
-                        --severity HIGH \
+                        --severity CRITICAL \
                         --exit-code 1 \
                         --quiet \
                         --format json -o trivy-image-CRITICAL-results.json
