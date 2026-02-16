@@ -191,8 +191,7 @@ pipeline {
                         keepAll: true, 
                         reportDir: './', 
                         reportFiles: 'trivy-image-CRITICAL-results.html', 
-                        reportName: 'Trivy Image CRITICAL HTML Report',
-                        useWrapperFileDirectory: true 
+                        reportName: 'Trivy Image CRITICAL HTML Report'
                     ])
 
                     publishHTML([
@@ -202,8 +201,7 @@ pipeline {
                         keepAll: true, 
                         reportDir: './', 
                         reportFiles: 'trivy-image-MEDIUM-results.html', 
-                        reportName: 'Trivy Image MEDIUM HTML Report',
-                        useWrapperFileDirectory: true 
+                        reportName: 'Trivy Image MEDIUM HTML Report'
                     ])
                 }
             }
