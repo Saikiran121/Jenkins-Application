@@ -52,7 +52,7 @@ pipeline {
                                 
                             )
 
-                            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
+                            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-report/dependency-check-junit.xml'
                             publishHTML([
                                 allowMissing: true, 
                                 alwaysLinkToLastBuild: true, 
