@@ -7,16 +7,24 @@
         Incorrectly mapped to MongoDB Server vulnerabilities.
         ]]></notes>
         <packageUrl regex="true">^pkg:npm/mongodb@.*$</packageUrl>
-        <vulnerabilityName regex="true">.*</vulnerabilityName>
     </suppress>
 
-    <!-- Restoring time-span suppression -->
+    <!-- Suppress formidable vulnerabilities -->
+    <suppress>
+        <notes><![CDATA[
+        Suppressing formidable CVE-2025-46653.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/formidable@.*$</packageUrl>
+        <cve>CVE-2025-46653</cve>
+    </suppress>
+
+    <!-- Correcting time-span suppression -->
     <suppress>
         <notes><![CDATA[
         Suppressing time-span vulnerability (CVE-2017-16115).
         ]]></notes>
         <packageUrl regex="true">^pkg:npm/time-span@.*$</packageUrl>
-        <cve>CVE-2017-16115</cve>
+        <vulnerabilityName>CVE-2017-16115</vulnerabilityName>
     </suppress>
 
 </suppressions>
