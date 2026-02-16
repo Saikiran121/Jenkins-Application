@@ -10,8 +10,8 @@ pipeline {
         MONGO_HOST = 'localhost:27017' 
         //MONGO_DB   = 'deepsea'
         MONGO_DB_CREDS = credentials('mongo-db-credentials')
-        MONGO_USERNAME = credentials('mongo-db-username')
-        MONGO_PASSWORD = credentials('mongo-db-password')
+        MONGO_USER = credentials('mongo-db-username')
+        MONGO_PASS = credentials('mongo-db-password')
     }
 
 
