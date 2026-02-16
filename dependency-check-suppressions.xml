@@ -3,7 +3,12 @@
 
     <!-- Suppress MongoDB server CPE incorrectly mapped to Node driver -->
     <suppress>
-        <cpe>cpe:2.3:a:mongodb:mongodb:7.0.0:*:*:*:*:*:*:*</cpe>
+        <notes><![CDATA[
+        Suppressing vulnerabilities for the mongodb npm package as they are often 
+        incorrectly mapped to the MongoDB server CPE.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:npm/mongodb@.*$</packageUrl>
+        <cpe regex="true">cpe:2.3:a:mongodb:mongodb:.*</cpe>
     </suppress>
 
     <!-- Suppress time-span CVE -->
