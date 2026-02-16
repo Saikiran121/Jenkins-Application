@@ -36,7 +36,8 @@ pipeline {
                                     --scan . \
                                     --format ALL \
                                     --project "Jenkins-Application" \
-                                    --nvdApiKey \$NVD_KEY \
+                                    --nvdApiKey \$NVD_KEY \\
+                                    --disableYarnAudit \
                                     --out ./dependency-check-report
                             """
                         }
@@ -45,7 +46,7 @@ pipeline {
                     post {
                         always {
                             dependencyCheckPublisher(
-                                pattern: 'dependency-check-report/*.xml',
+                                pattern: 'dependency-check-report/dependency-check-report.xml',
                                 
                             )
                         }
