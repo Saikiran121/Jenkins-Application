@@ -11,6 +11,12 @@ pipeline {
         //MONGO_DB   = 'deepsea'
     }
 
+
+    options {
+        disableResume()
+        disableConcurrentBuilds abortPrevious: true 
+    }
+
     stages {
         stage('Check Node version') {
             steps {
