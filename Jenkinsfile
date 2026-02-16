@@ -127,6 +127,7 @@ pipeline {
                         -Dsonar.projectKey=Jenkins-Application-Project \
                         -Dsonar.sources=app.js \
                         -Dsonar.host.url=http://localhost:9000 \
+                        -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info \
                         -Dsonar.token=sqp_da195eae3aafa6e850e347ed90f21a9743e1923e
                 '''
             }
