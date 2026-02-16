@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        Jenkins-EC2-Node
+        label 'ubuntu-jenkins-ec2-node'
     }
 
     tools {
