@@ -7,6 +7,7 @@
         Incorrectly mapped to MongoDB Server vulnerabilities.
         ]]></notes>
         <packageUrl regex="true">^pkg:npm/mongodb@.*$</packageUrl>
+        <vulnerabilityName regex="true">.*</vulnerabilityName>
     </suppress>
 
     <!-- Suppress formidable vulnerabilities -->
