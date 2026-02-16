@@ -51,6 +51,8 @@ pipeline {
                                 pattern: 'dependency-check-report/dependency-check-report.xml',
                                 
                             )
+
+                            junit allowEmptyResults: true, keepProperties: true, testResults: 'dependency-check-junit.xml'
                             publishHTML([
                                 allowMissing: true, 
                                 alwaysLinkToLastBuild: true, 
