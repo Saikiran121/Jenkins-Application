@@ -4,18 +4,13 @@
     <!-- Suppress MongoDB server CVEs incorrectly mapped to Node driver -->
     <suppress>
         <packageUrl regex="true">pkg:npm/mongodb@7\.0\.0</packageUrl>
-        <notes>
-            MongoDB server CVEs incorrectly mapped to Node.js mongodb driver.
-            Reviewed and accepted as not applicable.
-        </notes>
+        <cpe regex="true">cpe:2\.3:a:mongodb:mongodb:.*</cpe>
     </suppress>
 
     <!-- Suppress legacy dev dependency time-span -->
     <suppress>
         <packageUrl regex="true">pkg:npm/time-span@5\.1\.0</packageUrl>
-        <notes>
-            Dev dependency via chai-http. Low risk and not runtime exploitable.
-        </notes>
+        <cve>CVE-2017-16115</cve>
     </suppress>
 
 </suppressions>
