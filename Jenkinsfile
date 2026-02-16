@@ -51,10 +51,17 @@ pipeline {
                                 pattern: 'dependency-check-report/dependency-check-report.xml',
                                 
                             )
+                            publishHTML([
+                                allowMissing: true, 
+                                alwaysLinkToLastBuild: true, 
+                                icon: '', 
+                                keepAll: true, 
+                                reportDir: 'dependency-check-report', 
+                                reportFiles: 'dependency-check-report.html', 
+                                reportName: 'Dependency Check HTML Report'
+                            ])
                         }
                     }
-
-                    publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './', reportFiles: 'dependency-check-report.html', reportName: 'Dependency Check HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
