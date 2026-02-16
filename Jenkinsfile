@@ -39,6 +39,7 @@ pipeline {
                                     --nvdApiKey \$NVD_KEY \\
                                     --disableYarnAudit \
                                     --failOnCVSS 7 \
+                                    --suppression dependency-check-suppressions.xml \
                                     --out ./dependency-check-report
                             """
                         }
